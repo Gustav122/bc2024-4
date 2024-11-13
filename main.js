@@ -38,7 +38,24 @@ const server = http.createServer(async (req, res) => {
                 res.end("Not Found");
             }
         } 
-    } 
+    } else if (req.method === "PUT") {
+      let data = [];
+      req.on("data", (chunk) => {
+          data.push(chunk);
+      });
+      req.on("end", async () => {
+          const buffer = Buffer.concat(data);
+          try {
+              await fs.writeFile(filePath, buffer);
+              res.writeHead(201, { "Content-Type": "text/plain" });
+              res.end("File created/updated");
+          } catch (error) {
+              res.writeHead(500, { "Content-Type": "text/plain" });
+              res.end("Server error");
+          }
+      });
+  } 
+
 });
 
 server.listen(port, host, () => {
