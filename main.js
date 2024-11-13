@@ -39,23 +39,39 @@ const server = http.createServer(async (req, res) => {
             }
         } 
     } else if (req.method === "PUT") {
-      let data = [];
-      req.on("data", (chunk) => {
-          data.push(chunk);
-      });
-      req.on("end", async () => {
-          const buffer = Buffer.concat(data);
-          try {
-              await fs.writeFile(filePath, buffer);
-              res.writeHead(201, { "Content-Type": "text/plain" });
-              res.end("File created/updated");
-          } catch (error) {
-              res.writeHead(500, { "Content-Type": "text/plain" });
-              res.end("Server error");
-          }
-      });
-  } 
-
+        let data = [];
+        req.on("data", (chunk) => {
+            data.push(chunk);
+        });
+        req.on("end", async () => {
+            const buffer = Buffer.concat(data);
+            try {
+                await fs.writeFile(filePath, buffer);
+                res.writeHead(201, { "Content-Type": "text/plain" });
+                res.end("File created/updated");
+            } catch (error) {
+                res.writeHead(500, { "Content-Type": "text/plain" });
+                res.end("Server error");
+            }
+        });
+    } else if (req.method === "DELETE") {
+        try {
+            await fs.unlink(filePath);
+            res.writeHead(200, { "Content-Type": "text/plain" });
+            res.end("File deleted");
+        } catch (error) {
+            if (error.code === "ENOENT") {
+                res.writeHead(404, { "Content-Type": "text/plain" });
+                res.end("File not found");
+            } else {
+                res.writeHead(500, { "Content-Type": "text/plain" });
+                res.end("Server error");
+            }
+        }
+    } else {
+        res.writeHead(405, { "Content-Type": "text/plain" });
+        res.end("Method not allowed");
+    }
 });
 
 server.listen(port, host, () => {

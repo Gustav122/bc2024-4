@@ -10,10 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "commander": "^9.0.0",
-    "superagent": "^7.0.0"
+    "commander": "^9.5.0",
+    "superagent": "^7.1.6"
   },
   "devDependencies": {
-    "nodemon": "^2.0.0"
+    "nodemon": "^2.0.22"
   }
 }
